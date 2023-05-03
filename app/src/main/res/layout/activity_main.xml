@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/quantum_googgreen900"
+    android:tag="@string/custom_string1"
+    tools:context=".MainActivity">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="146dp"
+        android:theme="@style/Theme.AHEM_Basic.AppBarOverlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AHEM"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/teal_200"
+            app:layout_anchorGravity="end|bottom" />
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include
+        android:id="@+id/search_view_in_fragment_first"
+        layout="@layout/fragment_first"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/imageButton"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="56dp"-->
+    <!--        android:layout_marginTop="288dp"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:srcCompat="@android:drawable/ic_menu_myplaces" />-->
+
+    <!--    <androidx.appcompat.widget.SearchView-->
+<!--        android:id="@+id/search_view"-->
+<!--        android:layout_width="94dp"-->
+<!--        android:layout_height="47dp"-->
+<!--        android:layout_marginStart="304dp"-->
+<!--        android:layout_marginTop="212dp"-->
+<!--        android:iconifiedByDefault="false"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />-->
+
+    <Button
+        android:id="@+id/simplebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="352dp"
+        android:text="Open Maps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="282dp"
+        android:layout_height="198dp"
+        android:layout_marginTop="104dp"
+        android:background="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/simplebutton">
+
+        <CheckBox
+            android:id="@+id/checkBoxPM_10"
+            android:layout_width="@dimen/checkbox_width"
+            android:layout_height="@dimen/checkbox_height"
+            android:layout_marginStart="12dp"
+            android:background="@color/white"
+            android:text="@string/PM_10"
+            app:layout_constraintStart_toEndOf="@+id/checkBoxPM_25"
+            app:layout_constraintTop_toTopOf="@+id/checkBoxPM_25" />
+
+        <CheckBox
+            android:id="@+id/checkBoxNO2"
+            android:layout_width="@dimen/checkbox_width"
+            android:layout_height="@dimen/checkbox_height"
+            android:layout_marginTop="4dp"
+            android:background="@color/white"
+            android:text="@string/NO2"
+            app:layout_constraintStart_toStartOf="@+id/checkBoxO3"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxO3" />
+
+        <CheckBox
+            android:id="@+id/checkBoxO3"
+            android:layout_width="@dimen/checkbox_width"
+            android:layout_height="@dimen/checkbox_height"
+            android:layout_marginTop="4dp"
+            android:background="@color/white"
+            android:text="@string/O3"
+            app:layout_constraintStart_toStartOf="@+id/checkBoxPM_25"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxPM_25" />
+
+        <CheckBox
+            android:id="@+id/checkBoxPM_25"
+            android:layout_width="@dimen/checkbox_width"
+            android:layout_height="@dimen/checkbox_height"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/white"
+            android:text="@string/PM_2.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/checkBoxSO2"
+            android:layout_width="@dimen/checkbox_width"
+            android:layout_height="@dimen/checkbox_height"
+            android:layout_marginTop="4dp"
+            android:background="@color/white"
+            android:text="@string/SO2"
+            app:layout_constraintEnd_toEndOf="@+id/checkBoxPM_10"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxPM_10" />
+
+        <CheckBox
+            android:id="@+id/checkBoxCO"
+            android:layout_width="@dimen/checkbox_width"
+            android:layout_height="@dimen/checkbox_height"
+            android:layout_marginTop="4dp"
+            android:background="@color/white"
+            android:text="@string/CO"
+            app:buttonIconTint="@color/purple_200"
+            app:layout_constraintEnd_toEndOf="@+id/checkBoxSO2"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxSO2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="299dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="52dp"
+        android:background="@color/quantum_googred300"
+        android:text="@string/Sensitivities_title"
+        android:textColor="@color/quantum_googblue900"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/simplebutton" />
+
+    <fragment
+        android:id="@+id/autocomplete_fragment"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        android:layout_width="396dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="228dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Enter a location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_first" />
+
+    <CheckBox
+        android:id="@+id/checkBox_do_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/do_location"
+        app:layout_constraintBottom_toTopOf="@+id/simplebutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

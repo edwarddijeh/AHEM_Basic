@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="checkbox_height">60dp</dimen>
+    <dimen name="checkbox_width">120dp</dimen>
+    <dimen name="LL_Address_height">55dp</dimen>
+</resources>
