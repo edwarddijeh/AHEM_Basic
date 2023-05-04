@@ -114,8 +114,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         endButton.setEnabled(false);
         endButton.setVisibility(View.INVISIBLE);
         warningButton = findViewById(R.id.warningButton);
-        warningButton.setEnabled(false);
-//        warningButton.setEnabled(true);
+//        warningButton.setEnabled(false);
+        warningButton.setEnabled(true);
         warningButton.setVisibility(View.INVISIBLE);
 //        warningButton.setVisibility(View.VISIBLE);
 
@@ -161,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         warningButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                warningButton.setEnabled(false);
+//                warningButton.setEnabled(false);
                 warningButton.setVisibility(View.INVISIBLE);
                 Statics.warning_displayed = false;
                 System.out.println("Jacinta is cute!!");
@@ -171,14 +171,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        doTiming();
 //        doRefreshPolygons();
 //        doUserDanger();
-        mHandler.postDelayed(mRunnable5, Statics.refreshRate_warning_off * 1000);
-        mHandler.postDelayed(mRunnable6, Statics.refreshRate_warning_on * 1000);
+//        mHandler.postDelayed(mRunnable5, Statics.refreshRate_warning_off * 1000);
+//        mHandler.postDelayed(mRunnable6, Statics.refreshRate_warning_on * 1000);
 
     }
     private void doRoaming() throws JsonProcessingException {
         if (Statics.doLocation) {
             doLocation();
-//            showLocation();
+            showLocation();
 //            doTiming();
             mHandler.postDelayed(mRunnable, Statics.refreshRate_location * 1000);
         } else {
@@ -344,7 +344,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void run() {
                 // code to run periodically
                 // remove display of danger zone
-                warningButton.setEnabled(false);
+//                warningButton.setEnabled(false);
                 warningButton.setVisibility(View.INVISIBLE);
                 mHandler.postDelayed(this, Statics.refreshRate_warning_off * 1000);
             }
@@ -458,6 +458,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     1);
         }
+//        System.out.println("");
+//        if (Statics.warning){
+//            Statics.warning = false;
+//            warningButton.setVisibility(View.VISIBLE);
+//        } else {
+//            Statics.warning = true;
+//            warningButton.setVisibility(View.INVISIBLE);
+//        }
     }
 
     private void showLocation(){
@@ -496,13 +504,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Statics.in_danger_zone = true;
                 if (!Statics.warning_displayed && Statics.updated_polygons){
                     warningButton.setVisibility(View.VISIBLE);
-                    warningButton.setEnabled(false);
+                    warningButton.setEnabled(true);
                     Statics.warning_displayed = true;
                 }
             } else {
                 Statics.in_danger_zone = false;
                 System.out.println("NOT IN DANGER ZONE");
             }
+//            Statics.in_danger_zone = true;
         }
 //        currentPolygonList = convertPolygonDetailsToPolygonList(polygonDetails);
     }
@@ -1065,6 +1074,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
     private String doPollutants(List<Measurements> measurements){
+        int buffer = 0;
         for (Measurements measurement: measurements){
 ////            System.out.println("Pollutant selected is: "+measurement.getPollutantId());
 ////            System.out.println("Pollutant value is: "+ measurement.getValue());
@@ -1072,6 +1082,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (user.isSensitiveTo(measurement.getPollutantId())){
 //
                 pollutant_value += 100;
+                if (buffer < pollutant_value){
+                    buffer = pollutant_value;
+                }
+
                 if (pollutant_value > Statics.sensitivityThreshold_Red){
 //                    System.out.println("Measurement = "+measurement.getPollutantId()+"\t and value = "+measurement.getValue());
                     return "alpha"; //red = alpha
@@ -1080,11 +1094,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             if (pollutant_value >Statics.sensitivityThreshold_Red){
                 return "alpha"; // red = alpha
-            } else if (pollutant_value > Statics.sensitivityThreshold_Yellow){
-                // return value for yellow;
-//                System.out.println("Should be Yellow!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                return "gamma";
             }
+        }
+        if (buffer > Statics.sensitivityThreshold_Red){
+            return "alpha";
+        }else if (buffer > Statics.sensitivityThreshold_Yellow){
+            // return value for yellow;
+            return "gamma";
         }
         return "beta"; //green
     }

@@ -18,6 +18,7 @@ import java.util.concurrent.Executor;
 public class Statics {
     public static final int sensitivityThreshold_Red = 150;
     public static final int sensitivityThreshold_Yellow = 50;
+    public static final int numberToAddForSelectedSensitivity = 50;
     public static final int initial_zoom = 15;
 
     public static boolean doLocation = false;
@@ -29,7 +30,7 @@ public class Statics {
     public static final double centerLat = southLat+(northLat-southLat)/2;
     public static final double centerLon = westLon+(eastLon-westLon)/2;
     public static final int refreshRate_location = 8;
-    public static final int refreshRate_polygons = 6000;
+    public static final int refreshRate_polygons = 60;
     public static final int refreshRate_route = 10;
     public static final int refreshRate_dont_warn_Reset = 1;
     public static final int refreshRate_warning_on = 10;
@@ -46,5 +47,6 @@ public class Statics {
     public static boolean in_danger_zone = false;
     public static LatLng userLocationLL = new LatLng(centerLat, centerLon);
     public static int current_zoom;
+    public static boolean warning = false;
 
 }
