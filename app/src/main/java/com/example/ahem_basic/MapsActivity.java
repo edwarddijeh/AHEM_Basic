@@ -76,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Runnable mRunnable2;
     private Runnable mRunnable3;
     private Runnable mRunnable4;
+    private Runnable mRunnable5;
+    private Runnable mRunnable6;
     private Polyline routePolyline;
     private ActivityMapsBinding binding;
 
@@ -113,7 +115,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         endButton.setVisibility(View.INVISIBLE);
         warningButton = findViewById(R.id.warningButton);
         warningButton.setEnabled(false);
+//        warningButton.setEnabled(true);
         warningButton.setVisibility(View.INVISIBLE);
+//        warningButton.setVisibility(View.VISIBLE);
 
 
 //        getPolygons();
@@ -160,17 +164,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 warningButton.setEnabled(false);
                 warningButton.setVisibility(View.INVISIBLE);
                 Statics.warning_displayed = false;
+                System.out.println("Jacinta is cute!!");
             }
         });
 
 //        doTiming();
 //        doRefreshPolygons();
 //        doUserDanger();
+        mHandler.postDelayed(mRunnable5, Statics.refreshRate_warning_off * 1000);
+        mHandler.postDelayed(mRunnable6, Statics.refreshRate_warning_on * 1000);
 
     }
     private void doRoaming() throws JsonProcessingException {
-
-
         if (Statics.doLocation) {
             doLocation();
 //            showLocation();
@@ -304,6 +309,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void run() {
                 // code to run periodically
+                mMap.clear();
+                if (Statics.routing){
+                    doSubsequentRouting();
+                }
                 refreshPolygons();
                 Statics.updated_polygons = true;
                 System.out.println("did run refresh Polygons");
@@ -328,6 +337,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // code to run periodically
                 Statics.updated_polygons = false;
                 mHandler.postDelayed(this, Statics.refreshRate_dont_warn_Reset * 1000);
+            }
+        };
+        mRunnable5 = new Runnable() {
+            @Override
+            public void run() {
+                // code to run periodically
+                // remove display of danger zone
+                warningButton.setEnabled(false);
+                warningButton.setVisibility(View.INVISIBLE);
+                mHandler.postDelayed(this, Statics.refreshRate_warning_off * 1000);
+            }
+        };
+        mRunnable6 = new Runnable() {
+            @Override
+            public void run() {
+                // code to run periodically
+                // display danger zone
+                System.out.println("Danger zone warning code being run, doesn't mean it's showing tho");
+                if (Statics.in_danger_zone) {
+                    warningButton.setEnabled(true);
+                    warningButton.setVisibility(View.VISIBLE);
+                    mHandler.postDelayed(this, Statics.refreshRate_warning_on * 1000);
+                }
             }
         };
     }
@@ -401,9 +433,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             if (location != null) {
                                 LatLng latLng = new LatLng(location.getLatitude(),
                                         location.getLongitude());
+                                if (Statics.doLocation){
                                 user.setLocationLatLng(latLng);
                                 Statics.current_zoom = (int) mMap.getCameraPosition().zoom;
                                 Statics.userLocationLL = latLng;
+                                } else {
+                                    user.setLocationLatLng(new LatLng(Statics.centerLat, Statics.centerLon));
+                                    Statics.userLocationLL = new LatLng(Statics.centerLat, Statics.centerLon);
+                                }
 //                                try {
 //                                    doDanger();
 //                                } catch (JsonProcessingException e) {
@@ -641,15 +678,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Apply a stroke pattern to render a dashed line, and define colors.
                 pattern = PATTERN_POLYGON_ALPHA;
                 strokeColor = COLOR_DARK_GREEN_ARGB;
-//                fillColor = COLOR_LIGHT_GREEN_ARGB;
-                fillColor = COLOR_LIGHT_YELLOW_ARGB;
+                fillColor = COLOR_LIGHT_GREEN_ARGB;
+//                fillColor = COLOR_LIGHT_YELLOW_ARGB;
                 break;
             case "alpha": // red
                 // Apply a stroke pattern to render a line of dots and dashes, and define colors.
                 pattern = PATTERN_POLYGON_BETA;
                 strokeColor = COLOR_DARK_ORANGE_ARGB;
-//                fillColor = COLOR_RED_ARGB;
-                fillColor = COLOR_LIGHT_YELLOW_ARGB;
+                fillColor = COLOR_RED_ARGB;
+//                fillColor = COLOR_LIGHT_YELLOW_ARGB;
                 break;
             case "gamma": //yellow
                 pattern = PATTERN_POLYGON_GAMMA;

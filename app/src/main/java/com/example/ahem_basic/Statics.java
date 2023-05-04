@@ -1,6 +1,19 @@
 package com.example.ahem_basic;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.internal.location.zzau;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.concurrent.Executor;
 
 public class Statics {
     public static final int sensitivityThreshold_Red = 150;
@@ -16,9 +29,11 @@ public class Statics {
     public static final double centerLat = southLat+(northLat-southLat)/2;
     public static final double centerLon = westLon+(eastLon-westLon)/2;
     public static final int refreshRate_location = 8;
-    public static final int refreshRate_polygons = 5;
+    public static final int refreshRate_polygons = 6000;
     public static final int refreshRate_route = 10;
     public static final int refreshRate_dont_warn_Reset = 1;
+    public static final int refreshRate_warning_on = 10;
+    public static final int refreshRate_warning_off = 2;
     public static boolean GMapRouteClicked = false;
     public static boolean AHEMRouteClicked = false;
     public static boolean routing = true;

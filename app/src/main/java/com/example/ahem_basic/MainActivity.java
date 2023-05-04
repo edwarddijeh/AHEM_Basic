@@ -1,6 +1,9 @@
 package com.example.ahem_basic;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,14 +15,20 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.ahem_basic.databinding.ActivityMainBinding;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
@@ -338,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
                 // Do something based on checkbox state
                 if (isChecked) {
                     // Checkbox is checked
+                    doLocation();
                     Statics.doLocation = true;
                 } else {
                     // Checkbox is unchecked
@@ -345,6 +355,47 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    private void doLocation() {
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            // Enable the location layer if the permission has been granted
+
+            // Get the last known location of the device and move the camera
+            FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                LatLng latLng = new LatLng(location.getLatitude(),
+                                        location.getLongitude());
+                                if (Statics.doLocation){
+//                                    user.setLocationLatLng(latLng);
+                                    Statics.userLocationLL = latLng;
+                                } else {
+                                    user.setLocationLatLng(new LatLng(Statics.centerLat, Statics.centerLon));
+                                    Statics.userLocationLL = new LatLng(Statics.centerLat, Statics.centerLon);
+                                }
+//                                try {
+//                                    doDanger();
+//                                } catch (JsonProcessingException e) {
+//                                    throw new RuntimeException(e);
+//                                }
+//                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+                                System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSTHISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+                            }
+                        }
+                    });
+
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+        }
     }
 
 }

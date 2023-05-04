@@ -28,7 +28,8 @@
     <string name="end_polygon_request">&amp;decimalPlaces=3</string>
     <string name="do_location">Do Location</string>
     <string name="end_routing">End Routing</string>
-    <string name="danger_zone">WARNING!!\nYOU ARE IN A DANGER ZONE!!!\n\nPress to exit warning</string>
+    <string name="danger_zone">WARNING!!\nYOU ARE IN OR VERY CLOSE TO A DANGER ZONE!!!</string>
+    <string name="safety_first">Safety First</string>
 
 
 </resources>
