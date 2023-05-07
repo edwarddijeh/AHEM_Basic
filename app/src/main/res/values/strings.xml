@@ -11,6 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="custom_string1">TEST STR</string>
+<!--    MODIFY next line with for API KEY-->
     <string name="api_key">AIzaSyAHd2m9I5YD30mqfw215NjWXVKn9BwBSOo</string>
 
     <string name="address">Address</string>
@@ -23,8 +24,9 @@
     <string name="Sensitivities_title">Please select your sensitivities</string>
     <string name="LL_text">Lat,Lon (Default)</string>
     <string name="ip_address">https://kingjamie.ngrok.app/</string>
-    <string name="request_type">v1/visualization/polygons?boundary=</string>
+    <string name="request_type_polygon">v1/visualization/polygons?boundary=</string>
     <string name="request_type_route">v1/route?coordinates=</string>
+    <string name="request_type_point">v1/visualization/polygon?latitude=</string>
     <string name="end_polygon_request">&amp;decimalPlaces=3</string>
     <string name="do_location">Do Location</string>
     <string name="end_routing">End Routing</string>

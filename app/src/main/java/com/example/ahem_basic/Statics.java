@@ -30,11 +30,12 @@ public class Statics {
     public static final double centerLat = southLat+(northLat-southLat)/2;
     public static final double centerLon = westLon+(eastLon-westLon)/2;
     public static final int refreshRate_location = 8;
-    public static final int refreshRate_polygons = 60;
-    public static final int refreshRate_route = 10;
+    public static final int refreshRate_polygons = 15;
+    public static final int refreshRate_route = 15;
     public static final int refreshRate_dont_warn_Reset = 1;
     public static final int refreshRate_warning_on = 10;
     public static final int refreshRate_warning_off = 2;
+    public static boolean done_Polygons = false;
     public static boolean GMapRouteClicked = false;
     public static boolean AHEMRouteClicked = false;
     public static boolean routing = true;

@@ -64,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String GMap_route_json_str;
     private String Polygon_json_str;
     private String user_polygon_json_str;
+    private String user_point_json_str;
     User user;
     private Polyline AHEM_polyline;
     private Polyline GM_polyline;
@@ -236,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //           previous 32.993017,
 //           current  32.978890, -96.739511
             LatLng UTD = new LatLng(Statics.centerLat, Statics.centerLon);
-
+            user.setLocationLatLng(Statics.userLocationLL);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UTD, Statics.initial_zoom));
         }
 
@@ -253,7 +254,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 doSubsequentRouting();
                 mHandler.postDelayed(mRunnable3, Statics.refreshRate_route * 1000);
             } else {
+                mMap.clear();
                 doInitialRouting();
+                doPolygons();
                 showLocation();
             }
         }
@@ -275,15 +278,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Statics.afterInitialRoute = true;
     }
 
-    private void doRunnables1_2_4(){
-        mHandler.postDelayed(mRunnable, Statics.refreshRate_location * 1000);
-        mHandler.postDelayed(mRunnable2, Statics.refreshRate_polygons * 1000);
-        mHandler.postDelayed(mRunnable4, Statics.refreshRate_dont_warn_Reset * 1000);
-    }
-    private void doRunnable3(){
-        // for subsequent routing
-        mHandler.postDelayed(mRunnable3, Statics.refreshRate_route * 1000);
-    }
+//    private void doRunnables1_2_4(){
+//        mHandler.postDelayed(mRunnable, Statics.refreshRate_location * 1000);
+//        mHandler.postDelayed(mRunnable2, Statics.refreshRate_polygons * 1000);
+//        mHandler.postDelayed(mRunnable4, Statics.refreshRate_dont_warn_Reset * 1000);
+//    }
+//    private void doRunnable3(){
+//        // for subsequent routing
+//        mHandler.postDelayed(mRunnable3, Statics.refreshRate_route * 1000);
+//    }
 
     private void doTiming(){
         mHandler = new Handler();
@@ -312,8 +315,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 if (Statics.routing){
                     doSubsequentRouting();
+                    refreshPolygons();
+                } else {
+                    refreshPolygons();
                 }
-                refreshPolygons();
+
                 Statics.updated_polygons = true;
                 System.out.println("did run refresh Polygons");
                 mHandler.postDelayed(this, Statics.refreshRate_polygons * 1000);
@@ -323,11 +329,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void run() {
                 // code to run periodically
-                if (Statics.routing){
-                // get route/refresh route with new location;
-                    System.out.println("Doing Subsequent routing");
-                    doSubsequentRouting();
-                }
+//                if (Statics.routing){
+//                // get route/refresh route with new location;
+//                    System.out.println("Doing Subsequent routing");
+//                    doSubsequentRouting();
+//                }
                 mHandler.postDelayed(this, Statics.refreshRate_route * 1000);
             }
         };
@@ -378,12 +384,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         makeLLlist();
         currentRouteLatLngList = getLLlist();
         if (Statics.selectedRoute.equalsIgnoreCase("")){
-            AHEM_polyline = drawRoute(currentRouteLatLngList, Color.BLACK);
+            AHEM_polyline = drawRoute(currentRouteLatLngList, Color.CYAN);
             AHEM_polyline.setTag("AHEM");
             drawGMroute(origin, destination);
             doPolyLineClicked();
         } else if (Statics.selectedRoute.equalsIgnoreCase("AHEM")){
-            AHEM_polyline = drawRoute(currentRouteLatLngList, Color.BLACK);
+            AHEM_polyline = drawRoute(currentRouteLatLngList, Color.CYAN);
             AHEM_polyline.setTag("AHEM");
         } else if (Statics.selectedRoute.equalsIgnoreCase("GMAP")) {
             drawGMroute(origin, destination);
@@ -403,7 +409,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getRoute(origin, destination);
         makeLLlist();
         currentRouteLatLngList = getLLlist();
-        AHEM_polyline = drawRoute(currentRouteLatLngList, Color.BLACK);
+        AHEM_polyline = drawRoute(currentRouteLatLngList, Color.CYAN);
         AHEM_polyline.setTag("AHEM");
         drawGMroute(origin, destination);
         doPolyLineClicked();
@@ -484,20 +490,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng SE = new LatLng(Statics.userLocationLL.latitude - 0.001, Statics.userLocationLL.longitude +0.001);
         if (!no_connection) {
             System.out.println("NW = "+NW+"\nSE = "+SE+ "Statics.userLocationLL" + Statics.userLocationLL);
-            getUserPolygon(NW.latitude, SE.latitude, NW.longitude, SE.longitude);
+//            getUserPolygon(NW.latitude, SE.latitude, NW.longitude, SE.longitude);
+            getUserPoint(NW.latitude, NW.longitude);
 
 
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(user_polygon_json_str);
+            JsonNode rootNode = mapper.readTree(user_point_json_str);
             // Get the "code" field
             int code = rootNode.get("code").asInt();
 // Get the "message" field
             String message = rootNode.get("message").asText();
 // Get the "polygons" field as an array
-            JsonNode polygonsNode = rootNode.get("data").get("polygons");
-            System.out.println(user_polygon_json_str);
-            List<PolygonDetails> userPolygonDetails = makeUserDetails(polygonsNode);
-            List<Measurements> userLocationMeasurements = userPolygonDetails.get(0).getMeasurements();
+            JsonNode polygonsNode = rootNode.get("data").get("measurements");
+            System.out.println(user_point_json_str);
+            UserMeasurements userPointMeasurements = makeUserPointDetails(polygonsNode);
+            List<Measurements> userLocationMeasurements = userPointMeasurements.getMeasurementsList();
             boolean is_dangerous_to_user = isDangerousToUser(userLocationMeasurements);
             if (is_dangerous_to_user) {
                 System.out.println("IN DANGER ZONE");
@@ -521,14 +528,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 ////            System.out.println("Pollutant value is: "+ measurement.getValue());
             int pollutant_value = measurement.getValue();
             if (user.isSensitiveTo(measurement.getPollutantId())){
-                pollutant_value += 100;
+                pollutant_value += Statics.numberToAddForSelectedSensitivity;
                 if (pollutant_value > Statics.sensitivityThreshold_Red){
-//                    System.out.println("Measurement = "+measurement.getPollutantId()+"\t and value = "+measurement.getValue());
+                    System.out.println("User Sensitive\nMeasurement = "+measurement.getPollutantId()+"\t and value = "+measurement.getValue());
                     return true; //red = alpha
                 }
 //
             }
             if (pollutant_value >Statics.sensitivityThreshold_Red){
+                System.out.println("User not sensitive\nMeasurement = "+measurement.getPollutantId()+"\t and value = "+measurement.getValue());
                 return true; // red = alpha
             }
 //            else if (pollutant_value > Statics.sensitivityThreshold_Yellow){
@@ -650,6 +658,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int COLOR_WHITE_ARGB = 0xffffffff;
     private static final int COLOR_DARK_GREEN_ARGB = 0xff388E3C;
     private static final int COLOR_LIGHT_GREEN_ARGB = 0x3f81C784;
+    private static final int COLOR_LIGHT_BLUE_ARGB = 0x3f3333FF;
     private static final int COLOR_LIGHT_YELLOW_ARGB = 0x3fFFFF00;
     private static final int COLOR_DARK_ORANGE_ARGB = 0xffF57F17;
     private static final int COLOR_LIGHT_ORANGE_ARGB = 0x4fF9A825;
@@ -683,11 +692,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         switch (type) {
             // If no type is given, allow the API to use the default.
-            case "beta": //green
+            case "beta": //blue
                 // Apply a stroke pattern to render a dashed line, and define colors.
                 pattern = PATTERN_POLYGON_ALPHA;
                 strokeColor = COLOR_DARK_GREEN_ARGB;
-                fillColor = COLOR_LIGHT_GREEN_ARGB;
+                fillColor = COLOR_LIGHT_BLUE_ARGB;
 //                fillColor = COLOR_LIGHT_YELLOW_ARGB;
                 break;
             case "alpha": // red
@@ -813,7 +822,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String  northLat = String.valueOf(nLat), southLat = String.valueOf(sLat);
         String westlon = String.valueOf(wLon), eastlon = String.valueOf(eLon);
         String ip_address = getString(R.string.ip_address);
-        String request_type = getString(R.string.request_type);
+        String request_type = getString(R.string.request_type_polygon);
 
         String url = ip_address + request_type +
                 northLat+","+southLat+","+westlon+","+eastlon+"&decimalPlaces=3";
@@ -835,7 +844,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String  northLat = String.valueOf(nLat), southLat = String.valueOf(sLat);
         String westlon = String.valueOf(wLon), eastlon = String.valueOf(eLon);
         String ip_address = getString(R.string.ip_address);
-        String request_type = getString(R.string.request_type);
+        String request_type = getString(R.string.request_type_polygon);
 
         String url = ip_address + request_type +
                 northLat+","+southLat+","+westlon+","+eastlon+"&decimalPlaces=3";
@@ -852,6 +861,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
         user_polygon_json_str = task.giveUserPolygon();
+    }
+    private void getUserPoint(double Lat, double Lon){
+        String lat = String.valueOf(Lat);
+        String lon = String.valueOf(Lon);
+        String ip_address = getString(R.string.ip_address);
+        String request_type = getString(R.string.request_type_point);
+
+        String url = ip_address + request_type +
+                lat+"&longitude="+lon;
+        System.out.println(url);
+        MyAsyncTask task = new MyAsyncTask(url);
+        task.setMode("user_point");
+        task.execute();
+        String result = null;
+        try {
+            result = task.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        user_point_json_str = task.giveData_user_point();
     }
     private void getRoute(LatLng origin, LatLng destination){
         String  start_lon = String.valueOf(origin.longitude), start_lat = String.valueOf(origin.latitude);
@@ -903,7 +934,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
         }
         googleRouteLatLngList = task.giveGMapRoute();
-        GM_polyline = drawRoute(googleRouteLatLngList, Color.CYAN);
+        GM_polyline = drawRoute(googleRouteLatLngList, Color.GRAY);
         GM_polyline.setTag("GMAP");
     }
 
@@ -1003,6 +1034,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return details;
     }
+    private UserMeasurements makeUserPointDetails(JsonNode polygonsNode){
+        UserMeasurements details = new UserMeasurements();
+//        PolygonDetails detail = new PolygonDetails();
+            List<Measurements> measures = new ArrayList<>();
+            // Loop through the measurements array
+        for (JsonNode measurementNode : polygonsNode) {
+            Measurements measure = new Measurements();
+            // Get the pollutantId, value, and timestamp fields
+            String pollutantId = measurementNode.get("pollutantId").asText();
+            int value = measurementNode.get("value").asInt();
+            String timestamp = measurementNode.get("timestamp").asText();
+            measure.setPollutantId(pollutantId);
+            measure.setTimestamp(timestamp);
+            measure.setValue(value);
+            measures.add(measure);
+            // Do something with the data
+//                System.out.println("Pollutant: " + pollutantId + ", Value: " + value + ", Timestamp: " + timestamp);
+        }
+        details.setMeasurementsList(measures);
+
+        return details;
+    }
     private void makePlist() throws JsonProcessingException {
         currentRouteLatLngList.clear();
 //        Gson gson = new Gson();
@@ -1081,7 +1134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             int pollutant_value = measurement.getValue();
             if (user.isSensitiveTo(measurement.getPollutantId())){
 //
-                pollutant_value += 100;
+                pollutant_value += Statics.numberToAddForSelectedSensitivity;
                 if (buffer < pollutant_value){
                     buffer = pollutant_value;
                 }
@@ -1102,7 +1155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // return value for yellow;
             return "gamma";
         }
-        return "beta"; //green
+        return "beta"; //blue
     }
 
     private void removePolyLine(Polyline polyline){

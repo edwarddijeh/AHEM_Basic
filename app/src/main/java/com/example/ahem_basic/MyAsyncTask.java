@@ -23,9 +23,11 @@ public class MyAsyncTask extends AsyncTask<Void, Void, String> {
     private boolean polygon;
     private boolean GMapRoute;
     private boolean user_polygon;
+    private boolean user_point;
     private String data_route;
     private String data_polygon;
     private String data_user_polygon;
+    private String data_user_point;
     private String data_GMap_route;
     private List<LatLng> latLngList_GMAP;
 
@@ -34,6 +36,7 @@ public class MyAsyncTask extends AsyncTask<Void, Void, String> {
         polygon = false;
         user_polygon = false;
         routing = false;
+        user_point = false;
         if (str.equalsIgnoreCase("routing")){
             routing  = true;
         } else if (str.equalsIgnoreCase("gMaproute")){
@@ -42,6 +45,8 @@ public class MyAsyncTask extends AsyncTask<Void, Void, String> {
             polygon  = true;
         } else if (str.equalsIgnoreCase("user_polygon")){
             user_polygon = true;
+        } else if (str.equalsIgnoreCase("user_point")){
+            user_point = true;
         }
     }
 
@@ -50,6 +55,7 @@ public class MyAsyncTask extends AsyncTask<Void, Void, String> {
         this.url = url;
         data_route = "";
         data_polygon = "";
+        data_user_point = "";
     }
 
     @Override
@@ -105,6 +111,8 @@ public class MyAsyncTask extends AsyncTask<Void, Void, String> {
                             System.out.println(responseBody);
                         } else if (user_polygon){
                             data_user_polygon = responseBody;
+                        } else if (user_point){
+                            data_user_point = responseBody;
                         }
                     }
                     return responseBody;
@@ -140,6 +148,10 @@ public class MyAsyncTask extends AsyncTask<Void, Void, String> {
 
     public String giveUserPolygon() {
         return data_user_polygon;
+    }
+
+    public String giveData_user_point() {
+        return data_user_point;
     }
 
     private boolean anotherMethod(String url){
